@@ -20,12 +20,11 @@ function [simoutput] = simnarx(TN,input,output,inlags,outlags,n,m)
 
 siminput = input;
 simoutput = output;
-numz = numel(outlags);
-beginz = max(outlags(end),inlags(end)) +1;
+beginz = max(outlags(end),inlags(end))+1;
 for j = beginz:length(input)
 simfeaturez = [simoutput(j-outlags(end:-1:2))' siminput(j-inlags(1:end))'];
-simfeaturez(simfeaturez<0)=0;
-simfeaturez(simfeaturez>1)=1;
+simfeaturez(simfeaturez<0)=0+eps;
+simfeaturez(simfeaturez>1)=1-eps;
 simoutput(j) = evalspline(TN,simfeaturez,n,m);
 end
 

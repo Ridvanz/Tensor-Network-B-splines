@@ -105,7 +105,11 @@ while (itr <= MAXITR )
             
             res1(itr)=(1/nselect(itr))*norm(A*g-zeta(dataselect,:))^2; % check residual
             res2(itr)=(1/N)*lambda*(g'*WWW*g);
-
+            
+            if (itr>1) && ((res1(itr)+res2(itr))/(res1(itr-1)+res2(itr-1))> 0.999)
+                break
+            end
+%             STOP=1;
 %             disp(["iteration:" itr timer])
 %              disp(sweepindex)
             itr=itr+1; %update iteration
