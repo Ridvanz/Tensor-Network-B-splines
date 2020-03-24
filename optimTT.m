@@ -41,12 +41,14 @@ r = [TN.sz(:,1);1];
 P = diff(eye(I(1)),difforder);
 PP = P'*P;
 
+if numel(lambda)==1
+    lambda = lambda*ones(1,d);
+end
 
 if isempty(nselect)
     nselect = ones([1,MAXITR])*N;
 end
 
-tic
 while (itr <= MAXITR )
 %     ---------------------updateTT-----------------;
         %Select random batch of data
@@ -58,15 +60,15 @@ while (itr <= MAXITR )
         %Construct difference penalty matrices
         W = penalmat(TN,sweepindex,d,P,PP);
         
-        %Sum the difference penalty matrices to penalize each dimension equally
-        WWW = W{1};
+        %Weighted sum of the difference penalty matrices
+        WWW = lambda(1)*W{1};
         for s =2:d
-            WWW = WWW + W{s};
+            WWW = WWW + lambda(s)*W{s};
         end
           
         %Solve linear subsystem 
 
-             g=pinv(A'*A + (nselect(itr)/N)*lambda*WWW)*(A'*zeta(dataselect,:));
+             g=pinv(A'*A + (nselect(itr)/N)*WWW)*(A'*zeta(dataselect,:));
 
         %Update cores
         if ltr
@@ -104,9 +106,9 @@ while (itr <= MAXITR )
         if (sweepindex==d) || (sweepindex==1) % half a sweep
             
             res1(itr)=(1/nselect(itr))*norm(A*g-zeta(dataselect,:))^2; % check residual
-            res2(itr)=(1/N)*lambda*(g'*WWW*g);
+            res2(itr)=(1/N)*(g'*WWW*g);
             
-            if (itr>1) && ((res1(itr)+res2(itr))/(res1(itr-1)+res2(itr-1))> 0.999)
+            if (itr>1) && ((res1(itr)+res2(itr))/(res1(itr-1)+res2(itr-1))> 0.99999)
                 break
             end
 %             STOP=1;
