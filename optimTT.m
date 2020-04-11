@@ -108,7 +108,7 @@ while (itr <= MAXITR )
             res1(itr)=(1/nselect(itr))*norm(A*g-zeta(dataselect,:))^2; % check residual
             res2(itr)=(1/N)*(g'*WWW*g);
             
-            if (itr>1) && ((res1(itr)+res2(itr))/(res1(itr-1)+res2(itr-1))> 0.99999)
+            if (itr>4) && ((res1(itr)+res2(itr))/(res1(itr-1)+res2(itr-1))> 0.9999999)
                 break
             end
 %             STOP=1;
